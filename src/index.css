@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Roboto:ital,wght@0,100..900;1,100..900&family=Syne:wght@400..800&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+:root {
+  --bg-primary : white ;
+  --bg-secondry : var(--color-neutral-50) ;
+  --color-text : var(--color-neutral-900) ;
+  --color-border : var(--color-neutral-300) ;
+}
+
+.dark{
+    --bg-primary : black ;
+  --bg-secondry : var(--color-neutral-900) ;
+  --color-text : var(--color-neutral-50) ;
+  --color-border : var(--color-neutral-700) ;
+}
+
+@theme inline {
+  --color-primary : var(--bg-primary) ;
+  --color-secondry : var(--bg-secondry) ;
+  --color-text : var(--color-text) ;
+  --color-border : var(--color-border) ;
+}
+
+
+@theme {
+  --font-inter : "Inter" , sans-serif ;
+  --font-syne : "Syne" , sans-serif ;
+  --font-robo : "Roboto" , sans-serif ;
+  --font-nunito :'Nunito Sans' , sans-serif ;
+   --font-bbh: "BBH Sans Bogle", sans-serif;
+   --color-green :#00F092 ;
+   --color-bluish : #2D8CE3 ;
+
+   --animate-rotate : rotate 2s ease infinite ;
+   --animate-slideIn : slideIn 200ms ease-in forwards ;
+   @keyframes rotate {
+    from {
+      transform : rotate(0);
+    }
+    to {
+      transform : rotate(360deg);
+    }
+   }
+
+   @keyframes slideIn {
+    0%{
+      right : -100%;
+      opacity: 0;
+    }
+    100%{
+      right : 0 ;
+      opacity : 1;
+    }
+   }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* IE and Edge */
+      .no-scrollbar {
+        -ms-overflow-style: none;
+      }
+
+      /* Firefox */
+      .no-scrollbar {
+        scrollbar-width: none;
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
