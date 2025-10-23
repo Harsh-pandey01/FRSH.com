@@ -13,6 +13,7 @@ export const ThemeContextProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
+    document.body.classList = theme;
   }, [theme]);
 
   return (

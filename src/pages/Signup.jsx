@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedIn } from "../store/AuthSlice";
 import userUserInfo from "../hooks/useUserInfo";
+import { setDataToDatabase } from "../firebase/db";
 
 function Signup() {
   const navigate = useNavigate();
@@ -132,7 +133,10 @@ function Signup() {
 
       if (res) {
         const data = userUserInfo(res);
-        dispatch(userLoggedIn({ userInfo: data }));
+        // set the data into the firebase with the users/uuid and then its tag
+        const result = setDataToDatabase(data.uid, "customer");
+
+        dispatch(userLoggedIn({ userInfo: { ...data, role: "customer" } }));
         setTimeout(() => {
           navigate("/");
         }, 1000);
@@ -250,7 +254,11 @@ function Signup() {
           className="w-full my-3"
           onClick={async () => {
             const res = await signUpWithGoogle();
+            const data = userUserInfo(res);
+            // set the data into the firebase with the users/uuid and then its tag
+            const result = setDataToDatabase(data.uid, "customer");
 
+            dispatch(userLoggedIn({ userInfo: { ...data, role: "customer" } }));
             if (res) {
               navigate("/");
             }

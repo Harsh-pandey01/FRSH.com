@@ -9,6 +9,11 @@ import Signup from "./pages/Signup.jsx";
 import Login from "./pages/Login.jsx";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
+import Admin from "./pages/admin/Admin.jsx";
+import Dashboard from "./pages/admin/dashboard.jsx";
+import { path } from "motion/react-client";
+import AdminRegister from "./pages/admin/AdminRegister.jsx";
+import AdminLogin from "./pages/admin/AdminLogin.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +37,22 @@ const router = createBrowserRouter([
         element: <Login />,
       },
     ],
+  },
+  {
+    path: "admin",
+    element: <Admin />, // Only for /admin
+  },
+  {
+    path: "admin/dashboard",
+    element: <Dashboard />,
+  },
+  {
+    path: "admin/register",
+    element: <AdminRegister />,
+  },
+  {
+    path: "admin/login",
+    element: <AdminLogin />,
   },
 ]);
 

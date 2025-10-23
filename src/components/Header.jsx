@@ -61,6 +61,12 @@ function Header() {
               {!userInfo && (
                 <div className="flex  items-center gap-5">
                   <Link
+                    to={"admin"}
+                    className="bg-bluish text-white text-sm font-syne px-2 py-1 rounded-md cursor-pointer"
+                  >
+                    ADMIN
+                  </Link>
+                  <Link
                     to={"/login"}
                     className="text-text font-syne text-sm border-[1px] border-bluish px-3 py-1 cursor-pointer rounded-md"
                   >
@@ -93,9 +99,12 @@ function Header() {
                       <h1 className="text-sm font-inter p-2 rounded-md hover:bg-secondry">
                         {userInfo.email}
                       </h1>
-                      <div className="p-2 text-sm font-inter border border-transparent hover:border-1 hover:border-border rounded-md hover:bg-secondry transition-all">
-                        Want to sell Something ?
-                      </div>
+                      <Link
+                        to={"/admin"}
+                        className="p-2 text-sm font-inter border border-transparent hover:border-1 hover:border-border rounded-md hover:bg-secondry transition-all"
+                      >
+                        Admin Panel
+                      </Link>
                       <div
                         onClick={() => {
                           logOut();
