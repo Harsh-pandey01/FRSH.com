@@ -3,6 +3,7 @@ import { FaEyeSlash } from "react-icons/fa";
 import { loginWithEmail, signUpWithGoogle } from "../firebase/Auth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
+import { setDataToDatabase } from "../firebase/db";
 
 function Login() {
   const [loginCredential, setLoginCred] = useState({
@@ -10,7 +11,6 @@ function Login() {
     password: "",
   });
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async () => {

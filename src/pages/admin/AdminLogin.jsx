@@ -1,26 +1,31 @@
 import React, { useState } from "react";
-import { setDataToDatabase } from "../../firebase/db";
+import { getDataFromDatabase, setDataToDatabase } from "../../firebase/db";
 import { loginWithEmail } from "../../firebase/Auth";
 import toast, { ToastBar, Toaster } from "react-hot-toast";
 import userUserInfo from "../../hooks/useUserInfo";
 import { userLoggedIn } from "../../store/AuthSlice";
 import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router";
 
 function AdminLogin() {
   // setDataToDatabase();
+  const [isAdmin, setAdmin] = useState(false);
   const [adminCred, setCred] = useState({
     email: "",
     password: "",
   });
-
-  const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const handleAdminLogin = async () => {
     const res = await loginWithEmail(adminCred);
-    console.log(res);
-
     if (res) {
       console.log(res);
+      const { role } = await getDataFromDatabase(res?.user.uid);
+      if (role != "admin") {
+        toast.error("Current Account is not an Admin Account");
+        setAdmin(true);
+      } else {
+        navigate(`/admin/${res?.user?.uid}/dashboard`);
+      }
     }
   };
   return (
@@ -48,7 +53,7 @@ function AdminLogin() {
                 Email
               </label>
               <input
-                className="w-full px-2 py-1.5 mt-1 bg-secondry border border-border outline-none rounded-sm font-inter text-sm"
+                className="w-full text-text px-2 py-1.5 mt-1 bg-secondry border border-border outline-none rounded-sm font-inter text-sm"
                 placeholder="Enter your admin email"
                 type="email"
                 value={adminCred?.email}
@@ -63,7 +68,7 @@ function AdminLogin() {
                 Password
               </label>
               <input
-                className="w-full px-2 py-1.5 mt-1 bg-secondry border border-border outline-none rounded-sm font-inter text-sm"
+                className="w-full text-text px-2 py-1.5 mt-1 bg-secondry border border-border outline-none rounded-sm font-inter text-sm"
                 placeholder="Password"
                 type="password"
                 value={adminCred?.password}
@@ -82,6 +87,27 @@ function AdminLogin() {
               </button>
             </div>
           </form>
+
+          <div className="text-center mt-3 text-sm  font-inter">
+            Dont have an admin Account ?{" "}
+            <Link
+              to={"/admin/register"}
+              className="text-bluish text-xs underline cursor-pointer"
+            >
+              Register Now
+            </Link>
+          </div>
+
+          {isAdmin && (
+            <div className="my-1">
+              <h1 className="text-sm text-center font-inter">
+                Convert Into Admin Account -{" "}
+                <span className="text-sm font-syne ml-1 underline text-bluish cursor-pointer">
+                  Click here
+                </span>
+              </h1>
+            </div>
+          )}
         </div>
       </div>
       <Toaster />

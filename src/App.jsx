@@ -8,16 +8,19 @@ import { auth } from "./firebase/firebaseConfig";
 import { useDispatch } from "react-redux";
 import { userLoggedIn, userLoggedOut } from "./store/AuthSlice";
 import userUserInfo from "./hooks/useUserInfo";
+import { getDataFromDatabase } from "./firebase/db";
 
 function App() {
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userInfo = userUserInfo(user);
-        dispatch(userLoggedIn({ userInfo: userInfo }));
+
+        const { role } = await getDataFromDatabase(user?.uid);
+        dispatch(userLoggedIn({ userInfo: { ...userInfo, role } }));
       } else {
         dispatch(userLoggedOut());
       }
@@ -30,7 +33,6 @@ function App() {
         <div className="w-full  text-white font-nunito text-sm bg-bluish py-2 flex items-center justify-center">
           Order High Quality Cloths Nowwwww ........
         </div>
-
         <Header />
         <Outlet />
       </div>

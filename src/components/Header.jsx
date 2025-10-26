@@ -61,7 +61,7 @@ function Header() {
               {!userInfo && (
                 <div className="flex  items-center gap-5">
                   <Link
-                    to={"admin"}
+                    to={"adminPanel"}
                     className="bg-bluish text-white text-sm font-syne px-2 py-1 rounded-md cursor-pointer"
                   >
                     ADMIN
@@ -100,7 +100,7 @@ function Header() {
                         {userInfo.email}
                       </h1>
                       <Link
-                        to={"/admin"}
+                        to={"/adminPanel"}
                         className="p-2 text-sm font-inter border border-transparent hover:border-1 hover:border-border rounded-md hover:bg-secondry transition-all"
                       >
                         Admin Panel

@@ -8,11 +8,13 @@ import {
 import { app, auth } from "./firebaseConfig";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
+import { setDataToDatabase } from "./db";
 
 const provider = new GoogleAuthProvider();
 
 export const signupUser = async (userDetail) => {
   const { userEmail: email, password } = userDetail;
+  console.log(email, password);
   const signUpPromise = createUserWithEmailAndPassword(auth, email, password);
   toast.promise(signUpPromise, {
     loading: "Creating your account...",
@@ -28,13 +30,15 @@ export const signupUser = async (userDetail) => {
   }
 };
 
-export const signUpWithGoogle = async (email, password) => {
+export const signUpWithGoogle = async (role) => {
   try {
     const result = await signInWithPopup(auth, provider);
     // Get credential and token if needed
     const credential = GoogleAuthProvider.credentialFromResult(result);
     const token = credential?.accessToken;
     const user = result.user;
+    console.log(user, role);
+    const res = setDataToDatabase(user.uid, role);
     toast.success("Signed Up Successfully");
     return user;
   } catch (error) {
@@ -58,6 +62,7 @@ export const loginWithEmail = async ({ email, password }) => {
 
   try {
     const res = await loginPromise;
+
     return res;
   } catch (error) {
     return null;
