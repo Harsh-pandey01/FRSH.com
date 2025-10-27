@@ -12,7 +12,7 @@ function Admin() {
   const { uid } = useParams();
 
   return (
-    <div className="bg-primary h-screen w-full text-text">
+    <div className="bg-primary max-h-screen h-screen  w-full text-text">
       {/* dashboard Header */}
 
       <div className="flex z-10 items-center justify-between px-3 py-3 border-border border-b-1 bg-primary fixed w-full top-0 left-0">

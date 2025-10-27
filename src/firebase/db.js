@@ -4,7 +4,7 @@ import { app } from "./firebaseConfig";
 const db = getDatabase(app);
 
 export const setDataToDatabase = (uid, role) => {
-  // before login what we are going to do is we are going to create
+ 
   set(ref(db, "user/" + uid), {
     role,
   });

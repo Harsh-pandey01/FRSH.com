@@ -11,7 +11,7 @@
 
 .dark{
     --bg-primary : black ;
-  --bg-secondry : var(--color-neutral-900) ;
+  --bg-secondry : var(--color-zinc-900) ;
   --color-text : var(--color-neutral-50) ;
   --color-border : var(--color-neutral-700) ;
 }
@@ -32,7 +32,7 @@
    --font-bbh: "BBH Sans Bogle", sans-serif;
    --color-green :#00F092 ;
    --color-bluish : #2D8CE3 ;
-
+   --color-portal : #23272F;
    --animate-rotate : rotate 2s ease infinite ;
    --animate-slideIn : slideIn 200ms ease-in forwards ;
    @keyframes rotate {
@@ -70,7 +70,11 @@
         scrollbar-width: none;
       }
 
-
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 
 

@@ -13,6 +13,7 @@ import AdminInitial from "../pages/admin/AdminInitial";
 import Products from "../pages/admin/Products";
 import Orders from "../pages/admin/Orders";
 import Dashboard from "../pages/admin/dashboard";
+import AddNewItem from "../pages/admin/AddNewItem";
 
 const router = createBrowserRouter([
   {
@@ -32,14 +33,16 @@ const router = createBrowserRouter([
       { path: ":uid/dashboard", element: <Dashboard /> },
       { path: ":uid/products", element: <Products /> },
       { path: ":uid/orders", element: <Orders /> },
+      { path: ":uid/addNewProduct", element: <AddNewItem /> },
       { path: "register", element: <AdminRegister /> },
-      { path: "login", element: <AdminLogin /> },
     ],
   },
   {
     path: "adminPanel",
     element: <AdminInitial />,
   },
+  { path: "adminPanel/register", element: <AdminRegister /> },
+  { path: "adminPanel/login", element: <AdminLogin /> },
 ]);
 
 export default router;

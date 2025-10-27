@@ -132,7 +132,6 @@ function Signup() {
       const res = await signupUser(userData);
       if (res) {
         setDataToDatabase(res.uid, "customer");
-
         setTimeout(() => {
           navigate("/");
         }, 1000);
@@ -250,11 +249,6 @@ function Signup() {
           className="w-full my-3"
           onClick={async () => {
             const res = await signUpWithGoogle("customer");
-            // const data = userUserInfo(res);
-            // // set the data into the firebase with the users/uuid and then its tag
-            // const result = setDataToDatabase(data.uid, "customer");
-
-            // dispatch(userLoggedIn({ userInfo: { ...data, role: "customer" } }));
             if (res) {
               navigate("/");
             }
