@@ -1,13 +1,17 @@
 import React from "react";
 import { CiHeart } from "react-icons/ci";
 
-function ProductCard() {
+function ProductCard({ productConfig }) {
+  console.log(productConfig);
   return (
-    <div className="h-150 min-w-90 p-2 border border-border">
+    <div
+      id={productConfig?.id}
+      className="h-150 min-w-90 p-2 border border-border"
+    >
       <div className="h-120 w-full overflow-hidden rounded-md">
         <img
           className="h-full w-full object-cover"
-          src="mens-tshirt-1.jpg"
+          src={productConfig.productImages[0]}
           alt=""
         />
       </div>

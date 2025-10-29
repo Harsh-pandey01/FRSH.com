@@ -1,9 +1,20 @@
-import React from "react";
-import { CiHeart } from "react-icons/ci";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
+import { getListOflatestProducts } from "../firebase/db";
+import { useEffect, useState } from "react";
 
 function Home() {
+  const [latestProductsListing, setLatestProductListing] = useState([]);
+
+  async function loadLatestProduct() {
+    const res = await getListOflatestProducts();
+    setLatestProductListing(res);
+  }
+
+  useEffect(() => {
+    loadLatestProduct();
+  }, []);
+
   return (
     <>
       <div className="w-full px-5">
@@ -24,11 +35,9 @@ function Home() {
         {/* Some Latest Collections */}
         <div className="w-full no-scrollbar mt-5 py-10 overflow-auto">
           <div className="flex gap-5">
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            {latestProductsListing.map((product) => {
+              return <ProductCard productConfig={product} />;
+            })}
           </div>
         </div>
 

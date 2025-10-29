@@ -6,26 +6,15 @@ import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/firebaseConfig";
 import { useDispatch } from "react-redux";
-import { userLoggedIn, userLoggedOut } from "./store/AuthSlice";
-import userUserInfo from "./hooks/useUserInfo";
-import { getDataFromDatabase } from "./firebase/db";
+// import { userLoggedIn, userLoggedOut } from "./store/AuthSlice";
+// import userUserInfo from "./hooks/useUserInfo";
+// import { getDataFromDatabase } from "./firebase/db";
 
 function App() {
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userInfo = userUserInfo(user);
-
-        const { role } = await getDataFromDatabase(user?.uid);
-        dispatch(userLoggedIn({ userInfo: { ...userInfo, role } }));
-      } else {
-        dispatch(userLoggedOut());
-      }
-    });
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>

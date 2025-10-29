@@ -7,8 +7,8 @@ import {
 } from "firebase/auth";
 import { app, auth } from "./firebaseConfig";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { setDataToDatabase } from "./db";
+
+import { createUserInDatabase } from "./db";
 
 const provider = new GoogleAuthProvider();
 
@@ -38,7 +38,7 @@ export const signUpWithGoogle = async (role) => {
     const token = credential?.accessToken;
     const user = result.user;
     console.log(user, role);
-    const res = setDataToDatabase(user.uid, role);
+    const res = await createUserInDatabase(user.uid, role);
     toast.success("Signed Up Successfully");
     return user;
   } catch (error) {

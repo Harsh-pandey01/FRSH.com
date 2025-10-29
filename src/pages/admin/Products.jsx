@@ -1,9 +1,27 @@
 import { createPortal } from "react-dom";
 import ImageUploadPreview from "../../components/ImagesSelect";
 import { Link, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { getListOfAllTheProductByAnAdmin } from "../../firebase/db";
 
 function Products() {
   const { uid } = useParams();
+  const [productsData, setProductsData] = useState([]);
+
+  const handleProductsLoading = async () => {
+    try {
+      const products = await getListOfAllTheProductByAnAdmin(uid);
+      setProductsData(products);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  console.log(productsData);
+
+  useEffect(() => {
+    handleProductsLoading();
+  }, []);
   return (
     <div className="w-full  h-full ">
       <div className="flex items-center  justify-between">
@@ -14,6 +32,16 @@ function Products() {
         >
           Add New Item
         </Link>
+      </div>
+      <div>
+        {productsData.length > 0 &&
+          productsData.map((product) => {
+            return (
+              <div>
+                <img src={product.productImages[0]} alt="" />
+              </div>
+            );
+          })}
       </div>
     </div>
   );

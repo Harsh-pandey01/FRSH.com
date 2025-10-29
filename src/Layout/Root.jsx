@@ -5,9 +5,9 @@ import { RouterProvider } from "react-router";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
 import getUserInfo from "../hooks/useUserInfo";
-import { getDataFromDatabase } from "../firebase/db";
 import { userLoggedIn, userLoggedOut } from "../store/AuthSlice";
 import router from "./Router";
+import { getUserInfoFromDatabase } from "../firebase/db";
 
 export default function Root() {
   const dispatch = useDispatch();
@@ -15,11 +15,8 @@ export default function Root() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        console.log(user);
         const userInfo = getUserInfo(user);
-        console.log(userInfo);
-
-        const { role } = await getDataFromDatabase(user.uid);
+        const { role } = await getUserInfoFromDatabase(userInfo.uid);
         dispatch(userLoggedIn({ userInfo: { ...userInfo, role } }));
       } else {
         dispatch(userLoggedOut());

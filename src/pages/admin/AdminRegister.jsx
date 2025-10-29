@@ -5,8 +5,7 @@ import { signupUser, signUpWithGoogle } from "../../firebase/Auth";
 import userUserInfo from "../../hooks/useUserInfo";
 import { userLoggedIn } from "../../store/AuthSlice";
 import { FaEyeSlash } from "react-icons/fa";
-import { div } from "motion/react-client";
-import { setDataToDatabase } from "../../firebase/db";
+import { createUserInDatabase } from "../../firebase/db";
 import { Toaster } from "react-hot-toast";
 
 function AdminRegister() {
@@ -134,9 +133,10 @@ function AdminRegister() {
       const res = await signupUser(userData);
       if (res) {
         const data = userUserInfo(res);
-        const result = setDataToDatabase(data.uid, "admin");
+        const result = await createUserInDatabase(data.uid, "admin");
+        console.log(result);
         setTimeout(() => {
-          navigate(`/admin/dashboard/${data.uid}`);
+          navigate(`/admin/${data.uid}/dashboard`);
         }, 1000);
       }
     }
@@ -251,7 +251,7 @@ function AdminRegister() {
             <h1 className="text-center text-xs font-inter text-text">
               Already have an account ?{" "}
               <Link
-                to={"/admin/login"}
+                to={"/adminPanel/login"}
                 className="hover:underline pl-2 text-bluis font-bold font-syne text-bluish cursor-pointer"
               >
                 Login Noww

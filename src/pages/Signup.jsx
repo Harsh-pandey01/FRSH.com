@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedIn } from "../store/AuthSlice";
 import userUserInfo from "../hooks/useUserInfo";
-import { setDataToDatabase } from "../firebase/db";
+import { createUserInDatabase } from "../firebase/db";
 
 function Signup() {
   const navigate = useNavigate();
@@ -131,7 +131,7 @@ function Signup() {
     if (isValid) {
       const res = await signupUser(userData);
       if (res) {
-        setDataToDatabase(res.uid, "customer");
+        createUserInDatabase(res.uid, "customer");
         setTimeout(() => {
           navigate("/");
         }, 1000);

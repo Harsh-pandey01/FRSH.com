@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { getDataFromDatabase, setDataToDatabase } from "../../firebase/db";
 import { loginWithEmail } from "../../firebase/Auth";
 import toast, { ToastBar, Toaster } from "react-hot-toast";
-import userUserInfo from "../../hooks/useUserInfo";
-import { userLoggedIn } from "../../store/AuthSlice";
-import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router";
+import { getUserInfoFromDatabase } from "../../firebase/db";
 
 function AdminLogin() {
   // setDataToDatabase();
@@ -18,8 +15,8 @@ function AdminLogin() {
   const handleAdminLogin = async () => {
     const res = await loginWithEmail(adminCred);
     if (res) {
-      console.log(res);
-      const { role } = await getDataFromDatabase(res?.user.uid);
+      const { role } = await getUserInfoFromDatabase(res?.user.uid);
+
       if (role != "admin") {
         toast.error("Current Account is not an Admin Account");
         setAdmin(true);
