@@ -42,13 +42,14 @@ function Header() {
             >
               WOMENS WEAR
             </p>
-            <p
+            <Link
+              to={"collection"}
               className={`cursor-pointer ${
                 theme == "dark" ? "hover:text-green" : ""
               } transition-all duration-150 ease-in `}
             >
               COLLECTIONS
-            </p>
+            </Link>
           </nav>
         </div>
         <div>

@@ -14,6 +14,7 @@ import Products from "../pages/admin/Products";
 import Orders from "../pages/admin/Orders";
 import Dashboard from "../pages/admin/dashboard";
 import AddNewItem from "../pages/admin/AddNewItem";
+import ProductsCollection from "../pages/ProductsCollection";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
       { path: "cart", element: <Cart /> },
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
+      { path: "collection", element: <ProductsCollection /> },
     ],
   },
   {
@@ -34,7 +36,6 @@ const router = createBrowserRouter([
       { path: ":uid/products", element: <Products /> },
       { path: ":uid/orders", element: <Orders /> },
       { path: ":uid/addNewProduct", element: <AddNewItem /> },
-      { path: "register", element: <AdminRegister /> },
     ],
   },
   {

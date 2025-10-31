@@ -3,17 +3,22 @@ import Footer from "../components/Footer";
 import { getListOflatestProducts } from "../firebase/db";
 import { useEffect, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { Link } from "react-router";
 
 function Home() {
   const [latestProductsListing, setLatestProductListing] = useState([]);
   const productsCarausalRef = useRef(null);
 
   async function loadLatestProduct() {
-    const res = await getListOflatestProducts();
+    const res = await getListOflatestProducts(10);
     setLatestProductListing(res);
   }
 
   useEffect(() => {
+    window.addEventListener("load", () => {
+      console.log("loaded");
+    });
+
     loadLatestProduct();
   }, []);
 
@@ -71,9 +76,12 @@ function Home() {
         </div>
 
         <div className="flex itece justify-center">
-          <div className="bg-bluish font-syne text-white px-10 py-1.5 text-xl rounded-sm cursor-pointer shadow-2xs shadow-bluish mb-5">
+          <Link
+            to={"collection"}
+            className="bg-bluish font-syne text-white px-10 py-1.5 text-xl rounded-sm cursor-pointer shadow-2xs shadow-bluish mb-5"
+          >
             Explore All Products
-          </div>
+          </Link>
         </div>
       </div>
       <Footer />

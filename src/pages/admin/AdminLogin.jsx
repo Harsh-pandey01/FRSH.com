@@ -88,7 +88,7 @@ function AdminLogin() {
           <div className="text-center mt-3 text-sm  font-inter">
             Dont have an admin Account ?{" "}
             <Link
-              to={"/admin/register"}
+              to={"/adminPanel/register"}
               className="text-bluish text-xs underline cursor-pointer"
             >
               Register Now
