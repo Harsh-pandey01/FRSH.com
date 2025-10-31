@@ -10,6 +10,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { app } from "./firebaseConfig";
+import toast from "react-hot-toast";
 export const db = getFirestore(app);
 
 function createUser(role) {
@@ -36,7 +37,6 @@ export const getUserInfoFromDatabase = async (uid) => {
     if (docSnap.exists()) {
       return docSnap.data();
     } else {
-      console.log("No such user!");
       return null;
     }
   } catch (error) {
@@ -48,22 +48,27 @@ export const getUserInfoFromDatabase = async (uid) => {
 export const addNewItemByTheAdmin = async (uid, productInfoConfig) => {
   const userRef = doc(db, "users", uid);
   const { productId } = productInfoConfig;
-  console.log(productInfoConfig);
-  try {
-    const productsCollectionRef = collection(db, "products");
 
-    // Create a new document inside "products"
-    await addDoc(productsCollectionRef, {
+  try {
+    const Prom1 = await setDoc(doc(db, "products", productId), {
       ...productInfoConfig,
-      adminId: uid, // track who added it
-      createdAt: new Date(), // optional timestamp
+      adminId: uid,
+      createdAt: new Date(),
     });
-    await updateDoc(userRef, {
-      products: arrayUnion({ productId, uid }),
+
+    const Prom2 = updateDoc(userRef, {
+      products: arrayUnion({ productId }),
+    });
+
+    toast.promise(Prom2, {
+      loading: "Almost Done",
+      success: "Product Added Successfully",
+      error: (err) => err.message || "Something Went Wrong",
     });
 
     return true;
   } catch (error) {
+    console.log(error);
     return false;
   }
 };

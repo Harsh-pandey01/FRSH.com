@@ -14,7 +14,11 @@ function App() {
   const { theme } = useTheme();
   const dispatch = useDispatch();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const data = new FormData();
+    data.append("file", "image");
+    data.append("cloud_name", "dha51flmf");
+  }, []);
 
   return (
     <>
