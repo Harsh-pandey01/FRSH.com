@@ -6,7 +6,7 @@ function ProductCard({ productConfig }) {
   return (
     <div
       id={productConfig?.id}
-      className="h-150 min-w-90 p-2 border border-border"
+      className="h-150 w-90 min-w-90 p-2 border border-border"
     >
       <div className="h-120 w-full overflow-hidden rounded-md">
         <img

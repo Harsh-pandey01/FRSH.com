@@ -14,7 +14,7 @@ function Header() {
 
   return (
     <>
-      <div className="w-full sticky top-0 left-0 bg-primary shadow px-5 py-4 flex items-center justify-between border-b border-border ">
+      <div className="w-full z-50 sticky top-0 left-0 bg-primary shadow px-5 py-4 flex items-center justify-between border-b border-border ">
         <div className="flex items-center md:gap-10 lg:gap-50">
           <Link
             to={"/"}
