@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { getListOflatestProducts } from "../firebase/db";
 import ProductCard from "../components/ProductCard";
+import { useDispatch } from "react-redux";
 
 function ProductsCollection() {
   const [productsCollections, setProductsCollection] = useState([]);
+  const dispatch = useDispatch();
 
   async function loadLatestProduct() {
     const res = await getListOflatestProducts(10);

@@ -141,7 +141,6 @@ function AddNewItem() {
   }
 
   const handleSubmit = async () => {
-    console.log("clicked");
     let isFormValidForSubmission = validateNewItemFormForSubmission();
     console.log(isFormValidForSubmission);
     if (isFormValidForSubmission) {
@@ -151,9 +150,7 @@ function AddNewItem() {
         productId: crypto.randomUUID(),
         productImages: assetsUploaded,
       });
-      console.log(res);
       if (res) {
-        toast.success("Added New Item");
         setTimeout(() => {
           navigate(`/admin/${uid}/products`);
         });

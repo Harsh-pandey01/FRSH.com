@@ -1,7 +1,15 @@
-import React from "react";
 import { CiHeart } from "react-icons/ci";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart } from "../store/CartSlice";
+import {
+  addItemToWishlist,
+  removeItemFromWishlist,
+} from "../store/WishListSlice";
+import { useState } from "react";
 
 function ProductCard({ productConfig }) {
+  const dispatch = useDispatch();
+  const [isItemAddedToWishList, setIsAddedToWishList] = useState(false);
   console.log(productConfig);
   return (
     <div
@@ -16,11 +24,43 @@ function ProductCard({ productConfig }) {
         />
       </div>
       <div className="w-full border border-border overflow-clip divide-x-[1px] divide-border rounded-md mt-2 flex items-center justify-between">
-        <div className="flex-1 py-2 px-2 font-syne cursor-pointer  hover:bg-secondry">
+        <div
+          onClick={() => {
+            dispatch(
+              addItemToCart({
+                productId: productConfig.productId,
+                banner: productConfig.productImages[0],
+                title: productConfig.productName,
+                price: productConfig.productPrice,
+              })
+            );
+          }}
+          className="flex-1 py-2 px-2 font-syne cursor-pointer  hover:bg-secondry"
+        >
           ADD TO CART
         </div>
-        <div className="px-4 text-xl h-full hover:bg-secondry py-2 border-border cursor-pointer">
-          <CiHeart />
+        <div
+          onClick={() => {
+            if (isItemAddedToWishList) {
+              setIsAddedToWishList((prev) => !prev);
+              dispatch(
+                removeItemFromWishlist({ productId: productConfig.productId })
+              );
+            } else {
+              setIsAddedToWishList((prev) => !prev);
+              dispatch(
+                addItemToWishlist({
+                  productId: productConfig.productId,
+                  banner: productConfig.productImages[0],
+                  title: productConfig.productName,
+                  price: productConfig.productPrice,
+                })
+              );
+            }
+          }}
+          className="px-4 text-xl h-full hover:bg-secondry py-2 border-border cursor-pointer"
+        >
+          <CiHeart className={isItemAddedToWishList ? "bg-red-500" : ""} />
         </div>
       </div>
       <h1 className="font-nunito font-semibold mt-1">
