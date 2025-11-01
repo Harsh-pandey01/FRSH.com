@@ -24,9 +24,9 @@ function Home() {
 
   const handleCarausalSlide = (direction) => {
     if (direction == "left") {
-      productsCarausalRef.current.scrollLeft += 200;
-    } else {
       productsCarausalRef.current.scrollLeft -= 200;
+    } else {
+      productsCarausalRef.current.scrollLeft += 200;
     }
   };
 

@@ -6,15 +6,16 @@ import {
   removeItemFromWishlist,
 } from "../store/WishListSlice";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 function ProductCard({ productConfig }) {
   const dispatch = useDispatch();
   const [isItemAddedToWishList, setIsAddedToWishList] = useState(false);
-  console.log(productConfig);
+
   return (
     <div
       id={productConfig?.id}
-      className="h-150 w-90 min-w-90 p-2 border border-border"
+      className="h-150 w-full min-w-90 p-2 border border-border"
     >
       <div className="h-120 w-full overflow-hidden rounded-md">
         <img
@@ -34,6 +35,7 @@ function ProductCard({ productConfig }) {
                 price: productConfig.productPrice,
               })
             );
+            toast.success("Item added to cart");
           }}
           className="flex-1 py-2 px-2 font-syne cursor-pointer  hover:bg-secondry"
         >
@@ -46,6 +48,7 @@ function ProductCard({ productConfig }) {
               dispatch(
                 removeItemFromWishlist({ productId: productConfig.productId })
               );
+              toast.success("Item removed from wishlist");
             } else {
               setIsAddedToWishList((prev) => !prev);
               dispatch(
@@ -56,6 +59,7 @@ function ProductCard({ productConfig }) {
                   price: productConfig.productPrice,
                 })
               );
+              toast.success("Item added to wishlist");
             }
           }}
           className="px-4 text-xl h-full hover:bg-secondry py-2 border-border cursor-pointer"
