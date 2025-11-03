@@ -15,6 +15,7 @@ import Orders from "../pages/admin/Orders";
 import Dashboard from "../pages/admin/dashboard";
 import AddNewItem from "../pages/admin/AddNewItem";
 import ProductsCollection from "../pages/ProductsCollection";
+import ProductPage from "../pages/ProductPage";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "signup", element: <Signup /> },
       { path: "login", element: <Login /> },
       { path: "collection", element: <ProductsCollection /> },
+      { path: "productPage/:productId", element: <ProductPage /> },
     ],
   },
   {

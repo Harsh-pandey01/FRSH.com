@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
 // import CloudinaryAutoUpload from "../../hooks/handleMultipleImageUpload";
 import uploadImagesToCloudinary from "../../hooks/handleMultipleImageUpload";
+import SizeFilter from "../../components/SizeFilter";
 
 function AddNewItem() {
   const fileInputRef = useRef(null);
@@ -22,6 +23,7 @@ function AddNewItem() {
     productPrice: "",
     productPsudoPrice: "",
     productDiscountTag: "",
+    productSizes: [],
   });
 
   const handleSelect = (e) => {
@@ -97,6 +99,12 @@ function AddNewItem() {
         errorMsg: "Choose atlease one image",
       },
     ],
+    productSizes: [
+      {
+        required: true,
+        errorMsg: "Choose Available Sizes",
+      },
+    ],
   };
 
   const validateNewItemFormForSubmission = () => {
@@ -111,6 +119,12 @@ function AddNewItem() {
             setErrorMsgData((prev) => ({ ...prev, [key]: rule.errorMsg }));
             isFormValid = false;
             return true;
+          } else if (Array.isArray(userValue)) {
+            if (userValue.length == 0) {
+              setErrorMsgData((prev) => ({ ...prev, [key]: rule.errorMsg }));
+              isFormValid = false;
+              return true;
+            }
           }
         }
 
@@ -157,6 +171,11 @@ function AddNewItem() {
       }
     }
   };
+
+  const handleSizeFilter = (selectedSizes) => {
+    setProductFormData((prev) => ({ ...prev, productSizes: selectedSizes }));
+  };
+  console.log(productFormConfig);
 
   return (
     <div className="h-full overflow-y-auto pr-3">
@@ -248,6 +267,14 @@ function AddNewItem() {
                     <option value="tshirt">T-Shirt</option>
                     <option value="track">Track Pant</option>
                   </select>
+                </div>
+              </div>
+            </div>
+            <div className="border rounded-md border-border mt-4">
+              <div className="px-2 py-2 border-b border-border">
+                <h1 className="font-semibold font-inter">Available Sizes</h1>
+                <div>
+                  <SizeFilter onChange={handleSizeFilter} />
                 </div>
               </div>
             </div>

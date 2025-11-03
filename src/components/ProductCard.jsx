@@ -7,23 +7,25 @@ import {
 } from "../store/WishListSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Link } from "react-router";
 
 function ProductCard({ productConfig }) {
   const dispatch = useDispatch();
   const [isItemAddedToWishList, setIsAddedToWishList] = useState(false);
 
   return (
-    <div
-      id={productConfig?.id}
-      className="h-150 w-full min-w-90 p-2 border border-border"
-    >
-      <div className="h-120 w-full overflow-hidden rounded-md">
+    <div id={productConfig?.id} className="h-fit w-90 p-2 border border-border">
+      <Link
+        to={`/productPage/${productConfig?.productId}`}
+        state={productConfig}
+        className="h-120 w-full overflow-hidden rounded-md"
+      >
         <img
           className="h-full w-full object-cover"
           src={productConfig.productImages[0]}
           alt=""
         />
-      </div>
+      </Link>
       <div className="w-full border border-border overflow-clip divide-x-[1px] divide-border rounded-md mt-2 flex items-center justify-between">
         <div
           onClick={() => {
