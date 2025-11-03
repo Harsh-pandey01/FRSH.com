@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getListOflatestProducts } from "../firebase/db";
 import ProductCard from "../components/ProductCard";
-import { IoIosArrowDown } from "react-icons/io";
+
 import Filters from "../components/Filters";
 
 function ProductsCollection() {

@@ -1,12 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { FaChevronDown } from "react-icons/fa6";
-import { useSearchParams } from "react-router";
 
 function Filters({ callback }) {
-  // URL search params
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const [isSmallScreenFilterOpen, setSmallScreenFilter] = useState(false);
   const [isFilterOptionsOpen, setFilterOptionsOpen] = useState({
     Category: true,
@@ -14,14 +10,12 @@ function Filters({ callback }) {
     Sizes: false,
   });
 
-  // single source of truth for filters (keys match URL keys)
   const [appliedFilters, setAppliedFilters] = useState({
     productCategory: [],
     productSubCategory: [],
     productSizes: [],
   });
 
-  // config (title -> options). Title maps to keys as: product + Title
   const filtersConfigData = [
     {
       title: "Category",
@@ -48,24 +42,6 @@ function Filters({ callback }) {
       ],
     },
   ];
-
-  // --- Read URL on mount and populate appliedFilters ---
-  useEffect(() => {
-    // safe defaults
-    const readArray = (k) => {
-      const v = searchParams.get(k);
-      if (!v) return [];
-      return v === "" ? [] : v.split(",").filter(Boolean);
-    };
-
-    const fromUrl = {
-      productCategory: readArray("productCategory"),
-      productSubCategory: readArray("productSubCategory"),
-      productSizes: readArray("productSizes"),
-    };
-
-    setAppliedFilters(fromUrl);
-  }, []); // run once on mount
 
   // --- keep scroll locked when mobile drawer open ---
   useEffect(() => {
@@ -132,8 +108,6 @@ function Filters({ callback }) {
       productSizes: [],
     };
     setAppliedFilters(empty);
-    // clear search params
-    setSearchParams({});
   };
 
   // APPLY: write current filters to URL
@@ -156,9 +130,9 @@ function Filters({ callback }) {
       productSubCategory: appliedFilters.productSubCategory || [],
       productSizes: appliedFilters.productSizes || [],
     };
-    // If parent provided callback, call it with safe object
+
     if (typeof callback === "function") callback(safe);
-  }, [appliedFilters, callback]);
+  }, [appliedFilters]);
 
   // render single option (used by both desktop and mobile views)
   const renderOption = (filterCard, opt) => {
