@@ -1,348 +1,387 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { RxCross2 } from "react-icons/rx";
+import { FaChevronDown } from "react-icons/fa6";
+import { useSearchParams } from "react-router";
 
-const DEFAULT = {
-  category: [],
-  subcategory: [],
-  sizes: [],
-};
+function Filters({ callback }) {
+  // URL search params
+  const [searchParams, setSearchParams] = useSearchParams();
 
-const AVAILABLE = {
-  category: [
-    { id: "cat-men", label: "Men's Wear", value: "mens" },
-    { id: "cat-women", label: "Women's Wear", value: "womens" },
-    { id: "cat-kids", label: "Kids", value: "kids" },
-  ],
-  subcategory: [
-    { id: "sub-tshirt", label: "T Shirt", value: "tshirt" },
-    { id: "sub-shirt", label: "Shirt", value: "shirt" },
-    { id: "sub-jeans", label: "Jeans", value: "jeans" },
-  ],
-  sizes: [
-    { id: "size-s", label: "S", value: "S" },
-    { id: "size-m", label: "M", value: "M" },
-    { id: "size-l", label: "L", value: "L" },
-    { id: "size-xl", label: "XL", value: "XL" },
-    { id: "size-xxl", label: "XXL", value: "XXL" },
-  ],
-};
-
-export default function Filters({ initialFilters = DEFAULT, onApply }) {
-  const [open, setOpen] = useState(false); // mobile drawer open
-  const [filters, setFilters] = useState(() => ({
-    category: initialFilters.category ?? [],
-    subcategory: initialFilters.subcategory ?? [],
-    sizes: initialFilters.sizes ?? [],
-  }));
-
-  // collapse states for sections
-  const [collapsed, setCollapsed] = useState({
-    category: false,
-    subcategory: false,
-    sizes: false,
+  const [isSmallScreenFilterOpen, setSmallScreenFilter] = useState(false);
+  const [isFilterOptionsOpen, setFilterOptionsOpen] = useState({
+    Category: true,
+    SubCategory: false,
+    Sizes: false,
   });
 
-  // tempFilters to hold changes before apply (so user can modify and then Apply)
-  const [tempFilters, setTempFilters] = useState(filters);
+  // single source of truth for filters (keys match URL keys)
+  const [appliedFilters, setAppliedFilters] = useState({
+    productCategory: [],
+    productSubCategory: [],
+    productSizes: [],
+  });
 
-  // refs for outside click
-  const drawerRef = useRef(null);
-  const backdropRef = useRef(null);
+  // config (title -> options). Title maps to keys as: product + Title
+  const filtersConfigData = [
+    {
+      title: "Category",
+      options: [
+        { name: "Men's Clothing", value: "mens-clothing" },
+        { name: "Women's Clothing", value: "womens-clothing" },
+      ],
+    },
+    {
+      title: "SubCategory",
+      options: [
+        { name: "T Shirt", value: "tshirt" },
+        { name: "Track Pants", value: "tracks" },
+      ],
+    },
+    {
+      title: "Sizes",
+      options: [
+        { name: "S", value: "s" },
+        { name: "M", value: "m" },
+        { name: "L", value: "l" },
+        { name: "XL", value: "xl" },
+        { name: "XXL", value: "xxl" },
+      ],
+    },
+  ];
 
+  // --- Read URL on mount and populate appliedFilters ---
   useEffect(() => {
-    setTempFilters(filters);
-  }, [filters]);
-
-  // handle outside click to close mobile drawer
-  useEffect(() => {
-    function handleClick(e) {
-      if (!open) return;
-      if (
-        drawerRef.current &&
-        !drawerRef.current.contains(e.target) &&
-        backdropRef.current &&
-        backdropRef.current.contains(e.target)
-      ) {
-        setOpen(false);
-      }
-    }
-    function handleEsc(e) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    window.addEventListener("mousedown", handleClick);
-    window.addEventListener("keydown", handleEsc);
-    return () => {
-      window.removeEventListener("mousedown", handleClick);
-      window.removeEventListener("keydown", handleEsc);
+    // safe defaults
+    const readArray = (k) => {
+      const v = searchParams.get(k);
+      if (!v) return [];
+      return v === "" ? [] : v.split(",").filter(Boolean);
     };
-  }, [open]);
 
-  const toggleItem = (group, value) => {
-    setTempFilters((prev) => {
-      const exists = prev[group].includes(value);
-      return {
-        ...prev,
-        [group]: exists
-          ? prev[group].filter((v) => v !== value)
-          : [...prev[group], value],
-      };
+    const fromUrl = {
+      productCategory: readArray("productCategory"),
+      productSubCategory: readArray("productSubCategory"),
+      productSizes: readArray("productSizes"),
+    };
+
+    setAppliedFilters(fromUrl);
+  }, []); // run once on mount
+
+  // --- keep scroll locked when mobile drawer open ---
+  useEffect(() => {
+    document.body.style.overflow = isSmallScreenFilterOpen ? "hidden" : "auto";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isSmallScreenFilterOpen]);
+
+  // --- derived tags for UI (recomputed from appliedFilters) ---
+  const selectedFiltersName = useMemo(() => {
+    const tags = [];
+    Object.keys(appliedFilters).forEach((key) => {
+      (appliedFilters[key] || []).forEach((val) => {
+        tags.push({ key, value: val });
+      });
+    });
+    return tags;
+  }, [appliedFilters]);
+
+  // --- helper: toggle checkbox in state (controlled) ---
+  const toggleFilter = (name, value) => {
+    setAppliedFilters((prev) => {
+      const arr = prev[name] || [];
+      if (arr.includes(value)) {
+        // remove
+        return { ...prev, [name]: arr.filter((x) => x !== value) };
+      } else {
+        // add
+        return { ...prev, [name]: [...arr, value] };
+      }
     });
   };
 
-  const removeTag = (group, value) => {
-    setTempFilters((prev) => ({
-      ...prev,
-      [group]: prev[group].filter((v) => v !== value),
-    }));
+  // Called by clicking the input directly (event.target)
+  const handleInputChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    const checked = e.target.checked;
+    setAppliedFilters((prev) => {
+      const arr = prev[name] || [];
+      if (checked) {
+        if (!arr.includes(value)) return { ...prev, [name]: [...arr, value] };
+        return prev;
+      } else {
+        return { ...prev, [name]: arr.filter((x) => x !== value) };
+      }
+    });
   };
 
-  const handleApply = () => {
-    setFilters(tempFilters);
-    setOpen(false);
-    onApply?.(tempFilters);
+  // Remove single tag (from the pills)
+  const handleRemoveTag = (key, value) => {
+    setAppliedFilters((prev) => {
+      const arr = prev[key] || [];
+      return { ...prev, [key]: arr.filter((x) => x !== value) };
+    });
   };
 
+  // RESET: clear state + url
   const handleReset = () => {
-    setTempFilters({ category: [], subcategory: [], sizes: [] });
-    setFilters({ category: [], subcategory: [], sizes: [] });
-    onApply?.({ category: [], subcategory: [], sizes: [] });
+    const empty = {
+      productCategory: [],
+      productSubCategory: [],
+      productSizes: [],
+    };
+    setAppliedFilters(empty);
+    // clear search params
+    setSearchParams({});
   };
 
-  // helper to render a section
-  const Section = ({ title, name, items }) => {
-    const isCollapsed = collapsed[name];
-    return (
-      <div className="border border-border rounded-sm bg-primary text-text">
-        <button
-          type="button"
-          onClick={() =>
-            setCollapsed((prev) => ({ ...prev, [name]: !prev[name] }))
-          }
-          className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium border-b border-border cursor-pointer"
-          aria-expanded={!isCollapsed}
-        >
-          <span>{title}</span>
-          <svg
-            className={`w-4 h-4 transform transition-transform ${
-              isCollapsed ? "-rotate-90" : "rotate-0"
-            }`}
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden
-          >
-            <path
-              d="M6 8L10 12L14 8"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+  // APPLY: write current filters to URL
+  const handleApply = () => {
+    const params = {};
+    if (appliedFilters.productCategory?.length)
+      params.productCategory = appliedFilters.productCategory.join(",");
+    if (appliedFilters.productSubCategory?.length)
+      params.productSubCategory = appliedFilters.productSubCategory.join(",");
+    if (appliedFilters.productSizes?.length)
+      params.productSizes = appliedFilters.productSizes.join(",");
 
-        <div
-          className={`overflow-hidden transition-all duration-300 ${
-            isCollapsed ? "max-h-0" : "max-h-96"
-          }`}
+    setSearchParams(params);
+  };
+
+  // --- callback safety: always send object with arrays, avoid undefined ---
+  useEffect(() => {
+    const safe = {
+      productCategory: appliedFilters.productCategory || [],
+      productSubCategory: appliedFilters.productSubCategory || [],
+      productSizes: appliedFilters.productSizes || [],
+    };
+    // If parent provided callback, call it with safe object
+    if (typeof callback === "function") callback(safe);
+  }, [appliedFilters, callback]);
+
+  // render single option (used by both desktop and mobile views)
+  const renderOption = (filterCard, opt) => {
+    const name = "product" + filterCard.title; // matches keys in appliedFilters
+    const checked = (appliedFilters[name] || []).includes(opt.value);
+
+    return (
+      <div
+        key={opt.value}
+        className="px-1.5 py-2 flex gap-1.5 text-sm font-inter cursor-pointer items-center"
+        // clicking this wrapper toggles the checkbox (keeps behaviour same on all screens)
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleFilter(name, opt.value);
+        }}
+      >
+        <input
+          id={`${name}-${opt.value}`}
+          type="checkbox"
+          name={name}
+          value={opt.value}
+          checked={checked}
+          onChange={handleInputChange}
+          onClick={(e) => e.stopPropagation()} // prevent double-handling when wrapper clicked
+        />
+        <label
+          htmlFor={`${name}-${opt.value}`}
+          onClick={(e) => e.stopPropagation()}
+          className="cursor-pointer select-none"
         >
-          <div className="divide-y divide-border">
-            {items.map((it) => {
-              const checked = tempFilters[name].includes(it.value);
-              return (
-                <label
-                  key={it.id}
-                  htmlFor={it.id}
-                  className="flex items-center gap-2 px-3 py-2 text-sm cursor-pointer select-none"
-                >
-                  <input
-                    id={it.id}
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => toggleItem(name, it.value)}
-                    className="w-4 h-4 border border-gray-300 rounded-sm accent-black"
-                  />
-                  <span className="text-sm">{it.label}</span>
-                </label>
-              );
-            })}
-          </div>
-        </div>
+          {opt.name}
+        </label>
       </div>
     );
   };
 
-  // tags to display selected filters (from tempFilters so preview works)
-  const selectedTags = [
-    ...tempFilters.category.map((v) => ({ group: "category", value: v })),
-    ...tempFilters.subcategory.map((v) => ({ group: "subcategory", value: v })),
-    ...tempFilters.sizes.map((v) => ({ group: "sizes", value: v })),
-  ];
-
   return (
-    <>
-      {/* Desktop / large screen sidebar */}
-      <aside className="hidden bg-secondry text-text font-syne lg:block w-60">
-        <form
-          onSubmit={(e) => e.preventDefault()}
-          className="space-y-4 p-4 bg-transparent"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-semibold">Filters</h2>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={handleReset}
-                className="text-xs px-2 py-1 rounded border border-border"
-              >
-                Reset
-              </button>
-              <button
-                type="button"
-                onClick={() => onApply?.(tempFilters)}
-                className="text-xs px-3 py-1 rounded bg-bluish text-text"
-              >
-                Apply
-              </button>
-            </div>
-          </div>
-
-          {selectedTags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {selectedTags.map((t, idx) => (
-                <span
-                  key={`${t.group}-${t.value}-${idx}`}
-                  className="flex items-center gap-2 text-xs px-2 py-1 rounded-full border border-border"
-                >
-                  <span className="capitalize">{t.value}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeTag(t.group, t.value)}
-                    className="text-gray-500 text-xs"
-                    aria-label={`Remove ${t.value}`}
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Sections */}
-          <div className="space-y-3">
-            <Section
-              title="Category"
-              name="category"
-              items={AVAILABLE.category}
-            />
-            <Section
-              title="Sub Category"
-              name="subcategory"
-              items={AVAILABLE.subcategory}
-            />
-            <Section title="Sizes" name="sizes" items={AVAILABLE.sizes} />
-          </div>
-        </form>
-      </aside>
-
-      <div className="lg:hidden">
-        <div className="fixed left-0 right-0 bottom-0 z-40 flex items-center justify-between gap-2 p-3 bg-primary border-t border-border">
-          <button
-            onClick={() => setOpen(true)}
-            className="flex-1 py-2 px-3 rounded-md border border-border text-sm font-medium"
-          >
-            Filters
-          </button>
-
-          <div className="flex gap-2">
-            <button
-              onClick={handleReset}
-              className="px-3 py-2 rounded-md text-sm border border-border"
-            >
-              Reset
-            </button>
-            <button
-              onClick={handleApply}
-              className="px-4 py-2 rounded-md text-sm bg-bluish text-text"
-            >
-              Apply
-            </button>
-          </div>
-        </div>
-
-        {/* Backdrop */}
-        {open && (
-          <div
-            ref={backdropRef}
-            className="fixed inset-0 z-40  lg:hidden"
-            aria-hidden
-          />
-        )}
-
-        {/* Drawer */}
-        <div
-          ref={drawerRef}
-          className={`fixed left-0 right-0 bottom-0 z-50 lg:hidden transform transition-transform duration-300 ${
-            open ? "translate-y-0" : "translate-y-full"
-          }`}
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="max-h-[80vh] overflow-auto bg-primary rounded-t-lg shadow-xl pb-6">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <h3 className="text-lg font-semibold">Filters</h3>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">
-                  {selectedTags.length} selected
-                </span>
+    <div>
+      {/* Desktop sidebar (visible on lg and up) */}
+      <div className="lg:w-60 hidden lg:flex flex-col h-full bg-secondry border-r border-border">
+        <div className="h-full overflow-y-auto no-scrollbar flex flex-1">
+          <div className="w-full gap-2 flex flex-col bg-primary px-2 py-2">
+            {/* header */}
+            <div className="flex items-center justify-between">
+              <h1 className="text-text/60">Filters</h1>
+              <div className="flex items-center gap-4 font-syne text-sm">
+                <button onClick={handleReset} className="cursor-pointer">
+                  RESET
+                </button>
                 <button
-                  onClick={() => setOpen(false)}
-                  aria-label="Close filters"
-                  className="p-2 rounded-md"
+                  onClick={handleApply}
+                  className="px-2 py-1 cursor-pointer text-white bg-bluish border border-border rounded-md"
                 >
-                  ✕
+                  APPLY
                 </button>
               </div>
             </div>
 
-            <div className="p-4 space-y-4">
-              {selectedTags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {selectedTags.map((t, idx) => (
-                    <span
-                      key={`${t.group}-${t.value}-${idx}`}
-                      className="flex items-center gap-2 text-xs px-2 py-1 rounded-full border border-border"
-                    >
-                      <span className="capitalize">{t.value}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeTag(t.group, t.value)}
-                        className="text-gray-500 text-xs"
-                        aria-label={`Remove ${t.value}`}
-                      >
-                        ✕
-                      </button>
-                    </span>
-                  ))}
-                </div>
+            {/* selected tags */}
+            <div className="flex flex-wrap gap-3 mt-2">
+              {selectedFiltersName.length === 0 && (
+                <div className="text-xs text-text/60">No filters</div>
               )}
+              {selectedFiltersName.map((t) => (
+                <div
+                  key={`${t.key}-${t.value}`}
+                  onClick={() => handleRemoveTag(t.key, t.value)}
+                  className="text-xs flex items-center gap-1 cursor-pointer hover:bg-primary transition-all duration-150 font-inter px-1 py-1 bg-secondry border border-border rounded-md"
+                >
+                  {t.value}
+                  <RxCross2 />
+                </div>
+              ))}
+            </div>
 
-              <div className="space-y-3">
-                <Section
-                  title="Category"
-                  name="category"
-                  items={AVAILABLE.category}
-                />
-                <Section
-                  title="Sub Category"
-                  name="subcategory"
-                  items={AVAILABLE.subcategory}
-                />
-                <Section title="Sizes" name="sizes" items={AVAILABLE.sizes} />
-              </div>
+            {/* sections */}
+            <div className="flex w-full mt-2 flex-1 font-inter flex-col gap-3">
+              {filtersConfigData.map((filterCard) => (
+                <div
+                  key={filterCard.title}
+                  className="border border-border rounded-sm"
+                >
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFilterOptionsOpen((prev) => ({
+                        ...prev,
+                        [filterCard.title]: !prev[filterCard.title],
+                      }));
+                    }}
+                    className="px-1.5 py-2 text-sm cursor-pointer border-b border-border flex items-center justify-between"
+                  >
+                    <p>{filterCard.title}</p>
+                    <p
+                      className={`transition-all ease-in duration-150 ${
+                        isFilterOptionsOpen[filterCard.title]
+                          ? "rotate-180"
+                          : "rotate-0"
+                      }`}
+                    >
+                      <FaChevronDown />
+                    </p>
+                  </div>
+
+                  {isFilterOptionsOpen[filterCard.title] && (
+                    <div className="divide-y-1 divide-border transition-all duration-200">
+                      {filterCard.options.map((opt) =>
+                        renderOption(filterCard, opt)
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </>
+
+      {/* Mobile bottom bar */}
+      <div className="lg:hidden px-2 py-1 z-70 fixed w-full bottom-0 left-0 bg-primary text-text border-t border-border">
+        <div className="flex items-center justify-between gap-3">
+          <button
+            onClick={() => setSmallScreenFilter(true)}
+            className="flex-1 cursor-pointer bg-secondry hover:bg-primary transition-all ease-in duration-100 border border-border flex items-center justify-center py-2.5 text-text font-syne rounded-md"
+          >
+            FILTERS
+          </button>
+
+          <div className="font-syne flex gap-3">
+            <button onClick={handleReset} className="cursor-pointer">
+              RESET
+            </button>
+            <button
+              onClick={handleApply}
+              className="px-2.5 py-1 cursor-pointer bg-bluish border border-border rounded-md"
+            >
+              APPLY
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile drawer / sheet */}
+        <div
+          className={`absolute z-70 h-[100vh] flex items-end bg-primary/50 transition-all ease-in duration-200 left-0 w-full ${
+            isSmallScreenFilterOpen ? "bottom-0" : "-bottom-[100vh]"
+          }`}
+          onClick={() => setSmallScreenFilter(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="h-140 max-h-140 overflow-y-auto no-scrollbar w-full gap-2 flex flex-col bg-primary border border-border rounded-t-4xl px-6 py-4"
+          >
+            <div className="flex items-center justify-between">
+              <h1>Filters</h1>
+              <p
+                className="text-xl cursor-pointer"
+                onClick={() => setSmallScreenFilter(false)}
+              >
+                <RxCross2 />
+              </p>
+            </div>
+
+            {/* tags */}
+            <div className="flex flex-wrap gap-3 mt-2">
+              {selectedFiltersName.length === 0 && (
+                <div className="text-xs text-text/60">No filters</div>
+              )}
+              {selectedFiltersName.map((t) => (
+                <div
+                  key={`${t.key}-${t.value}`}
+                  onClick={() => handleRemoveTag(t.key, t.value)}
+                  className="text-xs flex items-center gap-1 cursor-pointer hover:bg-primary transition-all duration-150 font-inter px-1 py-1 bg-secondry border border-border rounded-md"
+                >
+                  {t.value}
+                  <RxCross2 />
+                </div>
+              ))}
+            </div>
+
+            {/* sections */}
+            <div className="flex w-full mt-2 flex-1 font-inter flex-col gap-3 pb-8">
+              {filtersConfigData.map((filterCard) => (
+                <div
+                  key={filterCard.title}
+                  className="border border-border rounded-sm"
+                >
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFilterOptionsOpen((prev) => ({
+                        ...prev,
+                        [filterCard.title]: !prev[filterCard.title],
+                      }));
+                    }}
+                    className="px-1.5 py-2 text-sm cursor-pointer border-b border-border flex items-center justify-between"
+                  >
+                    <p>{filterCard.title}</p>
+                    <p
+                      className={`transition-all ease-in duration-150 ${
+                        isFilterOptionsOpen[filterCard.title]
+                          ? "rotate-180"
+                          : "rotate-0"
+                      }`}
+                    >
+                      <FaChevronDown />
+                    </p>
+                  </div>
+
+                  {isFilterOptionsOpen[filterCard.title] && (
+                    <div className="divide-y-1 divide-border transition-all duration-200">
+                      {filterCard.options.map((opt) =>
+                        renderOption(filterCard, opt)
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
+
+export default Filters;

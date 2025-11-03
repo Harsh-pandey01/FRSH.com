@@ -68,7 +68,7 @@ function ProductCard({ productConfig }) {
         </div>
       </div>
       <h1 className="font-nunito font-semibold mt-1">
-        ₹540{" "}
+        ₹ {productConfig?.productPrice}
         <span className="text-text/50 text-xs line-through pl-1">₹1540</span>
         <span className="bg-green/50  border-green border-1 text-[10px] px-2  ml-5 rounded-full">
           BestSeller{" "}
