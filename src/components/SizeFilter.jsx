@@ -17,7 +17,7 @@ export default function SizeFilter({ onChange }) {
     }
 
     setSelectedSizes(updatedSizes);
-    onChange(updatedSizes); // Send sizes to parent component (like product filter API)
+    onChange(updatedSizes);
   };
 
   return (

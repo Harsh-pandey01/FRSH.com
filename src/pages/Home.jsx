@@ -4,21 +4,21 @@ import { getListOflatestProducts } from "../firebase/db";
 import { useEffect, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Link } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllProduct } from "../store/ProductSlice";
 
 function Home() {
   const [latestProductsListing, setLatestProductListing] = useState([]);
   const productsCarausalRef = useRef(null);
-
+  const dispatch = useDispatch();
+  const allProductData = useSelector((state) => state.productsData);
   async function loadLatestProduct() {
-    const res = await getListOflatestProducts(10);
+    const res = await getListOflatestProducts();
+    dispatch(fetchAllProduct(res));
     setLatestProductListing(res);
   }
 
   useEffect(() => {
-    window.addEventListener("load", () => {
-      console.log("loaded");
-    });
-
     loadLatestProduct();
   }, []);
 
