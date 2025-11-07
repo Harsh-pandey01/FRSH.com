@@ -21,7 +21,7 @@ function ProductCard({ productConfig }) {
         className="h-120 w-full overflow-hidden rounded-md"
       >
         <img
-          className="h-full w-full object-cover"
+          className="h-120 w-full object-cover"
           src={productConfig.productImages[0]}
           alt=""
         />
