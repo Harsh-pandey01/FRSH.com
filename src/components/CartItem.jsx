@@ -1,6 +1,9 @@
+import { useDispatch } from "react-redux";
+import { addItemToCart, reduceItemQuantity } from "../store/CartSlice";
+
 function CartItem({ cartInfo }) {
-  console.log(cartInfo);
   const { banner, price, productId, quantity, title } = cartInfo;
+  const dispatch = useDispatch();
   return (
     <div className="w-full flex justify-between py-5">
       <div className="flex gap-5 ">
@@ -48,9 +51,23 @@ function CartItem({ cartInfo }) {
           </select>
 
           <div className="flex items-center border rounded-sm border-border w-fit divide-x-[1px] divide-border mt-2">
-            <div className="px-2 cursor-pointer hover:bg-secondry">-</div>
+            <div
+              className="px-2 cursor-pointer hover:bg-secondry"
+              onClick={() => {
+                dispatch(reduceItemQuantity({ productId }));
+              }}
+            >
+              -
+            </div>
             <div className="px-2 font-inter">{quantity}</div>
-            <div className="px-2 cursor-pointer hover:bg-secondry">+</div>
+            <div
+              className="px-2 cursor-pointer hover:bg-secondry"
+              onClick={() => {
+                dispatch(addItemToCart({ productId }));
+              }}
+            >
+              +
+            </div>
           </div>
         </div>
       </div>

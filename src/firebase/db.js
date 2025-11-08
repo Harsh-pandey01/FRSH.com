@@ -113,3 +113,38 @@ export const getListOflatestProducts = async (productsCount) => {
 
   return requiredResult;
 };
+
+export async function updateAdminOrders(orders) {
+  const toastId = toast.loading("Placing your order...");
+
+  try {
+    // Group by admin to reduce writes
+    const groupedOrders = orders.reduce((acc, order) => {
+      if (!acc[order.adminID]) acc[order.adminID] = [];
+      acc[order.adminID].push(order);
+      return acc;
+    }, {});
+
+    for (const [adminID, adminOrders] of Object.entries(groupedOrders)) {
+      const adminRef = doc(db, "users", adminID);
+
+      for (const ord of adminOrders) {
+        await updateDoc(adminRef, {
+          adminOrders: arrayUnion({
+            orderID: ord.orderID,
+            orderStatus: ord.orderStatus,
+            userData: ord.userData,
+            productInfo: ord.productInfo,
+            createdAt: new Date(),
+          }),
+        });
+      }
+    }
+
+    toast.success("✅ Order placed successfully!", { id: toastId });
+    console.log("Orders updated successfully");
+  } catch (error) {
+    toast.error("❌ Failed to place order. Try again.", { id: toastId });
+    console.error("Error updating admin orders:", error);
+  }
+}

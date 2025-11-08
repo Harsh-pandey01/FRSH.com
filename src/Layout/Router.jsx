@@ -16,6 +16,7 @@ import Dashboard from "../pages/admin/dashboard";
 import AddNewItem from "../pages/admin/AddNewItem";
 import ProductsCollection from "../pages/ProductsCollection";
 import ProductPage from "../pages/ProductPage";
+import CheckoutPage from "../pages/CheckoutPage";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "collection", element: <ProductsCollection /> },
       { path: "productPage/:productId", element: <ProductPage /> },
+      { path: "checkoutPage", element: <CheckoutPage /> },
     ],
   },
   {
