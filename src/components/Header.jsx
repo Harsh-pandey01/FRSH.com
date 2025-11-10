@@ -58,7 +58,9 @@ function Header() {
               <Link to={"/cart"}>
                 <CiShoppingCart className="text-2xl cursor-pointer" />
               </Link>
-              <CiHeart className="text-2xl cursor-pointer" />
+              <Link to={"/wishlist"}>
+                <CiHeart className="text-2xl cursor-pointer" />
+              </Link>
               {!userInfo && (
                 <div className="flex  items-center gap-5">
                   <Link

@@ -17,6 +17,7 @@ import AddNewItem from "../pages/admin/AddNewItem";
 import ProductsCollection from "../pages/ProductsCollection";
 import ProductPage from "../pages/ProductPage";
 import CheckoutPage from "../pages/CheckoutPage";
+import Wishlist from "../pages/Wishlist";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       { path: "collection", element: <ProductsCollection /> },
       { path: "productPage/:productId", element: <ProductPage /> },
       { path: "checkoutPage", element: <CheckoutPage /> },
+      { path: "wishlist", element: <Wishlist /> },
     ],
   },
   {

@@ -17,7 +17,7 @@ function ProductPage() {
   const dispatch = useDispatch();
   const activeImageRef = useRef(null);
   const { allProducts } = useSelector((state) => state.productsData);
-
+  console.log(productInfo);
   const loadSimilarProducts = () => {
     if (allProducts) {
       const similar = allProducts.filter((item) => {
