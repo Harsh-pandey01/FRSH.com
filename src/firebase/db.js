@@ -133,6 +133,7 @@ export async function updateAdminOrders(orders) {
           adminOrders: arrayUnion({
             orderID: ord.orderID,
             orderStatus: ord.orderStatus,
+            orderPayment: ord.orderPaymentMode,
             userData: ord.userData,
             productInfo: ord.productInfo,
             createdAt: new Date(),
@@ -148,3 +149,18 @@ export async function updateAdminOrders(orders) {
     console.error("Error updating admin orders:", error);
   }
 }
+
+export const getAdminsOrdersListData = async (adminID) => {
+  try {
+    const docSnap = await getDoc(doc(db, "users", adminID));
+
+    if (docSnap.exists()) {
+      return docSnap.data().adminOrders;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting user info:", error);
+    return null;
+  }
+};

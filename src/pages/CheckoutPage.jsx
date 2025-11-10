@@ -75,6 +75,7 @@ function CheckoutPage() {
           userData: formData,
           orderStatus: "Placed",
           orderID: crypto.randomUUID(),
+          orderPaymentMode: modeOfPayment,
           productInfo: cartData.filter(
             (items) => item.productId == items.productId
           ),
