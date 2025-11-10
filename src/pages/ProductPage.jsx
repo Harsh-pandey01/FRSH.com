@@ -148,7 +148,7 @@ function ProductPage() {
           <h1 className="text-2xl md:text-3xl font-inter tracking-tight font-semibold">
             SIMILAR PRODUCTS{" "}
           </h1>
-          <div className="mt-3">
+          <div className="mt-3 flex overflow-x-scroll no-scrollbar items-center gap-2 shrink-0">
             {similarProducts.map((item) => {
               return <ProductCard productConfig={item} />;
             })}

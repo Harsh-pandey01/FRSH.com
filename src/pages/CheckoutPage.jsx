@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { MdOutlineDelete } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PaymentCardDetails from "../components/CardDetails";
 import { AnimatePresence, motion } from "motion/react";
 import { updateAdminOrders } from "../firebase/db";
+import { removeItemFromCart } from "../store/CartSlice";
 
 function CheckoutPage() {
   const { cartData } = useSelector((state) => state.cartdata);
@@ -12,6 +13,7 @@ function CheckoutPage() {
   const [isCardPaymentOpen, setIsCardPaymentOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const { allProducts } = useSelector((state) => state.productsData);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -398,7 +400,12 @@ function CheckoutPage() {
                     Quantity : {item.quantity}
                   </p>
                 </div>
-                <button className="px-2.5 hover:text-red-500 cursor-pointer text-xl">
+                <button
+                  onClick={() => {
+                    dispatch(removeItemFromCart({ productId: item.productId }));
+                  }}
+                  className="px-2.5 hover:text-red-500 cursor-pointer text-xl"
+                >
                   <MdOutlineDelete />
                 </button>
               </div>

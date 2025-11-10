@@ -14,7 +14,10 @@ function ProductCard({ productConfig }) {
   const [isItemAddedToWishList, setIsAddedToWishList] = useState(false);
 
   return (
-    <div id={productConfig?.id} className="h-fit w-90 p-2 border border-border">
+    <div
+      id={productConfig?.id}
+      className="h-fit w-90 shrink-0 p-2 border border-border"
+    >
       <Link
         to={`/productPage/${productConfig?.productId}`}
         state={productConfig}

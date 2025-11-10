@@ -3,13 +3,13 @@ import { getListOflatestProducts } from "../firebase/db";
 import ProductCard from "../components/ProductCard";
 
 import Filters from "../components/Filters";
+import ProductCardShimmerPage from "../Shimmers/ProductCardShimmer";
 
 function ProductsCollection() {
   const [allProductsCollections, setProductsCollection] = useState([]);
   const [searchInput, handleSearchInput] = useState("");
-  const [finalProductsAfterFiltering, setFilteringOnTheProducts] = useState([
-    ...allProductsCollections,
-  ]);
+  const [finalProductsAfterFiltering, setFilteringOnTheProducts] =
+    useState(null);
 
   async function loadLatestProduct() {
     const res = await getListOflatestProducts(10);
@@ -85,11 +85,16 @@ function ProductsCollection() {
           </div>
         </div>
 
-        <div className=" grid grid-cols-[repeat(auto-fill,minmax(270px,350px))]  w-full gap-5 justify-center lg:justify-start ">
-          {finalProductsAfterFiltering.map((product) => {
-            return <ProductCard productConfig={product} />;
-          })}
-        </div>
+        {finalProductsAfterFiltering == null ||
+        finalProductsAfterFiltering.length == 0 ? (
+          <ProductCardShimmerPage />
+        ) : (
+          <div className=" grid grid-cols-[repeat(auto-fill,minmax(270px,350px))]  w-full gap-5 justify-center lg:justify-start ">
+            {finalProductsAfterFiltering.map((product) => {
+              return <ProductCard productConfig={product} />;
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

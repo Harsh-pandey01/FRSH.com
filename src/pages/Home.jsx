@@ -6,6 +6,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Link } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllProduct } from "../store/ProductSlice";
+import ProductCardShimmer from "../Shimmers/ProductCardShimmer";
 
 function Home() {
   const [latestProductsListing, setLatestProductListing] = useState([]);
@@ -61,9 +62,13 @@ function Home() {
             ref={productsCarausalRef}
             className="flex gap-5 no-scrollbar overflow-auto scroll-smooth"
           >
-            {latestProductsListing.map((product) => {
-              return <ProductCard productConfig={product} />;
-            })}
+            {latestProductsListing.length == 0 ? (
+              <ProductCardShimmer />
+            ) : (
+              latestProductsListing.map((product) => {
+                return <ProductCard productConfig={product} />;
+              })
+            )}
           </div>
           <button
             onClick={() => {
