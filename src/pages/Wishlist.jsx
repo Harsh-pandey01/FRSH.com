@@ -1,10 +1,11 @@
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
+import { removeItemFromWishlist } from "../store/WishListSlice";
 
 function Wishlist() {
   const { wishlist } = useSelector((state) => state.wishlistdata);
-
+  const dispatch = useDispatch();
   return (
     <div className="w-full px-5 pt-5">
       <button
@@ -34,7 +35,14 @@ function Wishlist() {
                       alt="item-img"
                     />
                   </Link>
-                  <div className="border border-border font-inter text-center px-5 py-2.5">
+                  <div
+                    onClick={() => {
+                      dispatch(
+                        removeItemFromWishlist({ productId: item.productId })
+                      );
+                    }}
+                    className="border cursor-pointer border-border font-inter text-center px-5 py-2.5"
+                  >
                     Remove from Wishlist
                   </div>
                 </div>

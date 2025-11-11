@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getListOflatestProducts } from "../firebase/db";
 import ProductCard from "../components/ProductCard";
+import { RxCross1 } from "react-icons/rx";
 
 import Filters from "../components/Filters";
 import ProductCardShimmerPage from "../Shimmers/ProductCardShimmer";
@@ -23,39 +24,7 @@ function ProductsCollection() {
 
   return (
     <div className="w-full relative flex lg:gap-10  h-[calc(100vh-72px)]  flex-col-reverse lg:flex-row">
-      <Filters
-        callback={(appliedFilters) => {
-          const { productCategory, productSubCategory, productSizes } =
-            appliedFilters;
-
-          const isNoFilterApplied =
-            productCategory.length === 0 &&
-            productSubCategory.length === 0 &&
-            productSizes.length === 0;
-
-          if (isNoFilterApplied) {
-            setFilteringOnTheProducts([...allProductsCollections]);
-          }
-
-          const filteredItems = allProductsCollections.filter((item) => {
-            const matchCategory =
-              productCategory.length === 0 ||
-              productCategory.includes(item.productCategory);
-
-            const matchSubCategory =
-              productSubCategory.length === 0 ||
-              productSubCategory.includes(item.subCategory);
-
-            const matchSize =
-              productSizes.length === 0 || productSizes.includes(item.size);
-
-            return matchCategory && matchSubCategory && matchSize;
-          });
-
-          setFilteringOnTheProducts(filteredItems);
-        }}
-      />
-
+      <Filters />
       <div className="flex-1 px-5 py-5 overflow-y-auto scroll-smooth  no-scrollbar flex gap-8 flex-col ">
         <div className="flex items-center justify-between ">
           <div>
